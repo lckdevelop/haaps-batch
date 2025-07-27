@@ -1,45 +1,38 @@
 package com.hyundai.happsbtch.config;
 
-import com.google.auth.oauth2.GoogleCredentials;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.FirebaseOptions;
-import com.google.firebase.messaging.FirebaseMessaging;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
-
-import java.io.IOException;
-import java.io.InputStream;
 
 @Slf4j
 @Configuration
 public class FcmConfig {
-
+    // 임시로 비활성화 (Firebase 서비스 계정 키 파일이 없어서)
+    
+    /*
     @Value("${fcm.service-account-key-path}")
     private String serviceAccountKeyPath;
-
+    
     @Value("${fcm.project-id}")
     private String projectId;
-
+    
     @Bean
     public FirebaseApp firebaseApp() throws IOException {
-        if (FirebaseApp.getApps().isEmpty()) {
-            InputStream serviceAccount = new ClassPathResource(serviceAccountKeyPath.replace("classpath:", "")).getInputStream();
-            
-            FirebaseOptions options = FirebaseOptions.builder()
-                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                    .setProjectId(projectId)
-                    .build();
-
-            return FirebaseApp.initializeApp(options);
-        }
-        return FirebaseApp.getInstance();
+        InputStream serviceAccount = new ClassPathResource(serviceAccountKeyPath.replace("classpath:", "")).getInputStream();
+        FirebaseOptions options = FirebaseOptions.builder()
+                .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                .setProjectId(projectId)
+                .build();
+        
+        FirebaseApp app = FirebaseApp.initializeApp(options);
+        log.info("Firebase 앱 초기화 완료 - ProjectId: {}", projectId);
+        return app;
     }
-
+    
     @Bean
     public FirebaseMessaging firebaseMessaging(FirebaseApp firebaseApp) {
-        return FirebaseMessaging.getInstance(firebaseApp);
+        FirebaseMessaging messaging = FirebaseMessaging.getInstance(firebaseApp);
+        log.info("Firebase Cloud Messaging 초기화 완료");
+        return messaging;
     }
+    */
 } 
