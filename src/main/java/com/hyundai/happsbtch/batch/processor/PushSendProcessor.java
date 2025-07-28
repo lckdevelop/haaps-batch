@@ -33,10 +33,10 @@ public class PushSendProcessor implements ItemProcessor<PushSendStbyEntity, Push
         boolean success;
         String failMsg = null;
         String failCode = null;
-        if ("AOS".equalsIgnoreCase(device.getTeOpsyGbcd())) {
+        if ("1".equalsIgnoreCase(device.getTeOpsyGbcd())) {
             success = fcmPushService.sendPushMessage(stby, device);
             if (!success) failMsg = "FCM_FAIL";
-        } else if ("IOS".equalsIgnoreCase(device.getTeOpsyGbcd())) {
+        } else if ("2".equalsIgnoreCase(device.getTeOpsyGbcd())) {
             success = apnsPushService.sendPushMessage(stby, device);
             if (!success) failMsg = "APNS_FAIL";
         } else {

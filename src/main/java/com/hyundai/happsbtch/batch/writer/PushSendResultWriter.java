@@ -37,7 +37,7 @@ public class PushSendResultWriter implements ItemWriter<PushSendResult> {
                 success.setPushMsgSeq(stby.getPushMsgSeq());
                 success.setDeviceToken(device != null ? device.getDeviceToken() : null);
                 success.setEmpId(stby.getTargetEmpid());
-                success.setAppId(null); // 필요시 채우기
+                success.setAppId(null); // (푸시발송대기 테이블에 있으면 좋음)
                 success.setPushSvrType(stby.getPushSvrType());
                 success.setSendStatusCode("S");
                 success.setSentDtm(now);
@@ -51,7 +51,7 @@ public class PushSendResultWriter implements ItemWriter<PushSendResult> {
                 fail.setPushMsgSeq(stby.getPushMsgSeq());
                 fail.setDeviceToken(device != null ? device.getDeviceToken() : null);
                 fail.setEmpId(stby.getTargetEmpid());
-                fail.setAppId(null); // 필요시 채우기
+                fail.setAppId(null); // (푸시발송대기 테이블에 있으면 좋음)
                 fail.setPushSvrType(stby.getPushSvrType());
                 fail.setPushSvrRstCode(result.getFailCode());
                 fail.setPushSvrRstMsg(result.getFailMsg());

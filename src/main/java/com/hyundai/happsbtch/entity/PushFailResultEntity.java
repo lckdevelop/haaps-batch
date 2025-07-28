@@ -9,7 +9,12 @@ import lombok.Data;
 public class PushFailResultEntity { // 푸시실패결과
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "push_fail_result_seq_gen")
+    @SequenceGenerator(
+            name = "push_fail_result_seq_gen",
+            sequenceName = "PUSH_FAIL_RESULT_SEQ",
+            allocationSize = 1 // 100으로 변경하는걸로 고려
+    )
     @Column(name = "SEQ")
     private Long seq;
 
