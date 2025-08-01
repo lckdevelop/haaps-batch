@@ -10,12 +10,12 @@ import com.hyundai.happsbtch.repository.PushSendStbyRepository;
 import com.hyundai.happsbtch.repository.PushSuccessResultRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Slf4j
 @Component
@@ -26,7 +26,7 @@ public class PushSendResultWriter implements ItemWriter<PushSendResult> {
     private final PushSendStbyRepository stbyRepository;
 
     @Override
-    public void write(Chunk<? extends PushSendResult> items) {
+    public void write(List<? extends PushSendResult> items) {
         for (PushSendResult result : items) {
             PushSendStbyEntity stby = result.getStby();
             UserDeviceInfo device = result.getDevice();

@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface PushSendTargetInfoRepository extends JpaRepository<PushSendTargetInfoEntity, Long> {
-    List<PushSendTargetInfoEntity> findByPushMsgSeq(Long pushMsgSeq);
+    List<PushSendTargetInfoEntity> findByIdPushMsgSeq(Long pushMsgSeq);
 } 

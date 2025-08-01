@@ -27,7 +27,7 @@ public class PushStbyInsertReader implements ItemReader<PushStbyInsertReader.Pus
             List<PushStbyInsertDto> result = new ArrayList<>();
             List<PushMsgMasterEntity> masters = masterRepository.findByPrcFlagAndRsvYn("P", "N");
             for (PushMsgMasterEntity master : masters) {
-                List<PushSendTargetInfoEntity> targets = targetRepository.findByPushMsgSeq(master.getSeq());
+                List<PushSendTargetInfoEntity> targets = targetRepository.findByIdPushMsgSeq(master.getSeq());
                 for (PushSendTargetInfoEntity target : targets) {
                     result.add(new PushStbyInsertDto(master, target));
                 }

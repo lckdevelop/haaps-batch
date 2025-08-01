@@ -1,7 +1,7 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.5.3'
-	id 'io.spring.dependency-management' version '1.1.7'
+	id 'org.springframework.boot' version '2.7.18'
+	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
 }
 
 group = 'happs-btch'
@@ -9,8 +9,24 @@ version = '0.0.1-SNAPSHOT'
 
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
+		languageVersion = JavaLanguageVersion.of(8)
 	}
+	sourceCompatibility = JavaVersion.VERSION_1_8
+	targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+// 컴파일 옵션 설정
+compileJava {
+	options.encoding = "UTF-8"
+	options.compilerArgs += ['-parameters']
+	sourceCompatibility = '8'
+	targetCompatibility = '8'
+}
+
+compileTestJava {
+	options.encoding = "UTF-8"
+	sourceCompatibility = '8'
+	targetCompatibility = '8'
 }
 
 configurations {
@@ -19,23 +35,66 @@ configurations {
 	}
 }
 
+//repositories {
+//	mavenCentral()
+//}
+
 repositories {
-	mavenCentral()
+	// 그룹 저장소: Maven Central 대체 (mirrorOf = *)
+	maven {
+		allowInsecureProtocol = true
+		name = "nexus-hdlp-groups"
+		url = uri("http://nexus.ehyundai.com/repository/hdlp-groups/")
+		credentials {
+			username = findProperty("nexusUsername") ?: System.getenv("NEXUS_USERNAME")
+			password = findProperty("nexusPassword") ?: System.getenv("NEXUS_PASSWORD")
+		}
+	}
+
+	// Maven Central mirror 역할
+	maven {
+		allowInsecureProtocol = true
+		name = "nexus-maven-public"
+		url = uri("http://nexus.ehyundai.com/repository/maven-public/")
+		credentials {
+			username = findProperty("nexusUsername") ?: System.getenv("NEXUS_USERNAME")
+			password = findProperty("nexusPassword") ?: System.getenv("NEXUS_PASSWORD")
+		}
+	}
+
+	maven {
+		allowInsecureProtocol = true
+		name = "nexus-3rd-party"
+		url = uri("http://nexus.ehyundai.com/repository/3rd-party/")
+		credentials {
+			username = findProperty("nexusUsername") ?: System.getenv("NEXUS_USERNAME")
+			password = findProperty("nexusPassword") ?: System.getenv("NEXUS_PASSWORD")
+		}
+	}
+
+	// Fallback
+	//mavenCentral()
 }
+//dependencies {
+//	implementation 'com.oracle.database.jdbc:orai18n:19.3.0.0'
+//}
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-batch'
+	implementation 'org.springframework.batch:spring-batch-core:4.3.10'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'com.google.firebase:firebase-admin:9.2.0' // FCM
-	implementation 'com.eatthepath:pushy:0.15.2' // APNS (Pushy 최신 안정 버전)
+	implementation 'javax.servlet:javax.servlet-api:4.0.1'
+	implementation 'com.google.firebase:firebase-admin:9.3.0' // FCM
+	implementation 'com.eatthepath:pushy:0.15.1' // APNS (Pushy 최신 안정 버전)
 	implementation 'com.fasterxml.jackson.core:jackson-databind'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	runtimeOnly 'com.oracle.database.jdbc:ojdbc11'
+	runtimeOnly 'com.oracle.database.jdbc:ojdbc8:19.3.0.0'
+	//implementation 'com.oracle.database.jdbc:orai18n:19.8.0.0'
 	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'

@@ -1,11 +1,12 @@
 package com.hyundai.happsbtch.entity;
 
-import jakarta.persistence.*;
 import lombok.Data;
+
+import javax.persistence.*;
 
 @Entity
 @Data
-@Table(name = "PUSH_MSG_MASTER", schema = "SC_PT")
+@Table(name = "PUSH_MSG_MASTER", schema = "SC_HAPP")
 public class PushMsgMasterEntity { // 푸시메시지마스터
 
     @Id
@@ -34,8 +35,8 @@ public class PushMsgMasterEntity { // 푸시메시지마스터
     @Column(name = "RSV_DTM", length = 14)
     private String rsvDtm;
 
-    @Column(name = "PRTY")
-    private Integer prty;
+    @Column(name = "PUSH_PRTY_VAL")
+    private Integer pushPrtyVal;
 
     @Column(name = "PRC_FLAG", columnDefinition = "CHAR(1)")
     private String prcFlag; // 처리상태: 'P'(대기), 'C'(완료)
@@ -45,5 +46,17 @@ public class PushMsgMasterEntity { // 푸시메시지마스터
 
     @Column(name = "RGST_ID", length = 50)
     private String rgstId;
+
+    @Column(name = "REG_PRG_ID", length = 100)
+    private String regPrgId;
+
+    @Column(name = "CHG_DTM", length = 14)
+    private String chgDtm;
+
+    @Column(name = "CHG_ID", length = 100)
+    private String chgId;
+
+    @Column(name = "CHG_PRG_ID", length = 100)
+    private String chgPrgId;
 }
 

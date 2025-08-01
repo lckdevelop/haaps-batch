@@ -9,9 +9,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.job.builder.JobBuilder;
-import org.springframework.batch.core.repository.JobRepository;
-import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
+import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,9 +19,11 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 @Slf4j
 @Configuration
+@EnableBatchProcessing
 @RequiredArgsConstructor
 public class PushSendBatchJob {
-    private final JobRepository jobRepository;
+    private final JobBuilderFactory jobBuilderFactory;
+    private final StepBuilderFactory stepBuilderFactory;
     private final PlatformTransactionManager transactionManager;
     private final PushSendStbyReader reader;
     private final PushSendProcessor processor;
@@ -32,15 +34,15 @@ public class PushSendBatchJob {
 
     @Bean
     public Job pushSendJob() {
-        return new JobBuilder("pushSendJob", jobRepository)
+        return jobBuilderFactory.get("pushSendJob")
                 .start(pushSendStep())
                 .build();
     }
 
     @Bean
     public Step pushSendStep() {
-        return new StepBuilder("pushSendStep", jobRepository)
-                .<PushSendStbyEntity, PushSendResult>chunk(chunkSize, transactionManager)
+        return stepBuilderFactory.get("pushSendStep")
+                .<PushSendStbyEntity, PushSendResult>chunk(chunkSize)
                 .reader(reader)
                 .processor(processor)
                 .writer(writer)

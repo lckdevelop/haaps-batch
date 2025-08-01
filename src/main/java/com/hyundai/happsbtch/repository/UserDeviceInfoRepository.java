@@ -8,6 +8,5 @@ import java.util.List;
 
 @Repository
 public interface UserDeviceInfoRepository extends JpaRepository<UserDeviceInfo, String> {
-    //List<UserDeviceInfo> findByEmpIdAndUseYn(String empId, String useYn);
-    List<UserDeviceInfo> findByEmpId(String empId);
-} 
+    List<UserDeviceInfo> findByEmpIdAndPushAgrYn(String empId, String pushAgrYn);
+}

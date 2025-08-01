@@ -1,11 +1,11 @@
 package com.hyundai.happsbtch.entity;
 
-import jakarta.persistence.*;
 import lombok.Data;
+import javax.persistence.*;
 
 @Entity
 @Data
-@Table(name = "PUSH_SUCCESS_RESULT", schema = "SC_PT")
+@Table(name = "PUSH_SUCCESS_RESULT", schema = "SC_HAPP")
 public class PushSuccessResultEntity { // 푸시성공결과
 
     @Id
@@ -15,16 +15,13 @@ public class PushSuccessResultEntity { // 푸시성공결과
             sequenceName = "PUSH_SUCCESS_RESULT_SEQ",
             allocationSize = 1 // 100으로 변경하는걸로 고려
     )
-    @Column(name = "SEQ")
-    private Long seq;
+    @Column(name = "PUSH_MSG_SEQ")
+    private Long pushMsgSeq;
 
     @Column(name = "PUSH_SEND_STBY_SEQ")
     private Long pushSendStbySeq;
 
-    @Column(name = "PUSH_MSG_SEQ")
-    private Long pushMsgSeq;
-
-    @Column(name = "DEVICE_TOKEN", length = 1000)
+    @Column(name = "DEVI_TOKN", length = 1000)
     private String deviceToken;
 
     @Column(name = "EMP_ID", length = 50)

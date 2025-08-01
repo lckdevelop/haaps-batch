@@ -23,7 +23,7 @@ public class PushSendProcessor implements ItemProcessor<PushSendStbyEntity, Push
     @Override
     public PushSendResult process(PushSendStbyEntity stby) {
         // 사번으로 디바이스 정보 조회
-        List<UserDeviceInfo> deviceList = userDeviceInfoRepository.findByEmpId(stby.getTargetEmpid());
+        List<UserDeviceInfo> deviceList = userDeviceInfoRepository.findByEmpIdAndPushAgrYn(stby.getTargetEmpid(), "Y");
         if (deviceList.isEmpty()) {
             log.warn("사용자 디바이스 정보 없음: {}", stby.getTargetEmpid());
             return PushSendResult.fail(stby, null, "NO_DEVICE", "No device info");

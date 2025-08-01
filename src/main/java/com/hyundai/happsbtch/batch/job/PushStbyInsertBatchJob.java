@@ -9,9 +9,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.job.builder.JobBuilder;
-import org.springframework.batch.core.repository.JobRepository;
-import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
+import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,9 +19,11 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 @Slf4j
 @Configuration
+@EnableBatchProcessing
 @RequiredArgsConstructor
 public class PushStbyInsertBatchJob {
-    private final JobRepository jobRepository;
+    private final JobBuilderFactory jobBuilderFactory;
+    private final StepBuilderFactory stepBuilderFactory;
     private final PlatformTransactionManager transactionManager;
     private final PushStbyInsertReader reader;
     private final PushStbyInsertProcessor processor;
@@ -32,15 +34,15 @@ public class PushStbyInsertBatchJob {
 
     @Bean
     public Job pushStbyInsertJob() {
-        return new JobBuilder("pushStbyInsertJob", jobRepository)
+        return jobBuilderFactory.get("pushStbyInsertJob")
                 .start(pushStbyInsertStep())
                 .build();
     }
 
     @Bean
     public Step pushStbyInsertStep() {
-        return new StepBuilder("pushStbyInsertStep", jobRepository)
-                .<PushStbyInsertDto, PushSendStbyEntity>chunk(chunkSize, transactionManager)
+        return stepBuilderFactory.get("pushStbyInsertStep")
+                .<PushStbyInsertDto, PushSendStbyEntity>chunk(chunkSize)
                 .reader(reader)
                 .processor(processor)
                 .writer(writer)

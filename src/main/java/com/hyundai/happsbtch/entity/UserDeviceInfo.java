@@ -1,13 +1,14 @@
 package com.hyundai.happsbtch.entity;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "USER_DEVICE_INFO", schema = "SC_PT")
+@Table(name = "USER_DEVICE_INFO", schema = "SC_HAPP")
 @IdClass(UserDeviceInfo.PK.class)
 @Data
 @NoArgsConstructor
@@ -19,7 +20,7 @@ public class UserDeviceInfo {
     private String empId;
 
     @Id
-    @Column(name = "DEVICE_TOKEN", nullable = false, length = 500)
+    @Column(name = "DEVI_TOKN", nullable = false, length = 500)
     private String deviceToken;
 
     @Column(name = "TE_OPSY_GBCD", length = 1)
@@ -33,6 +34,9 @@ public class UserDeviceInfo {
 
     @Column(name = "PUSH_SVR_TYPE", nullable = false, length = 20)
     private String pushSvrType;
+
+    @Column(name = "PUSH_AGR_YN", length = 1)
+    private String pushAgrYn;
 
     @Column(name = "PUSH_OS_AUTH_STATUS", nullable = false, length = 20)
     private String pushOsAuthStatus;

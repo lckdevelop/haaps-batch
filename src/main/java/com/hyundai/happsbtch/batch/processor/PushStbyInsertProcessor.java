@@ -21,10 +21,9 @@ public class PushStbyInsertProcessor implements ItemProcessor<PushStbyInsertDto,
 
     @Override
     public PushSendStbyEntity process(PushStbyInsertDto dto) {
-        // 사번으로 디바이스 정보 조회 (여러개면 첫번째)
-        List<UserDeviceInfo> deviceList = userDeviceInfoRepository.findByEmpId(dto.getTarget().getTargetEmpid());
+        List<UserDeviceInfo> deviceList = userDeviceInfoRepository.findByEmpIdAndPushAgrYn(dto.getTarget().getId().getTargetEmpid(), "Y");
         if (deviceList.isEmpty()) {
-            log.warn("[대기적재] 디바이스 정보 없음: {}", dto.getTarget().getTargetEmpid());
+            log.warn("[대기적재] 디바이스 정보 없음: {}", dto.getTarget().getId().getTargetEmpid());
             return null;
         }
         UserDeviceInfo device = deviceList.get(0);
@@ -33,7 +32,7 @@ public class PushStbyInsertProcessor implements ItemProcessor<PushStbyInsertDto,
         String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
         PushSendStbyEntity stby = new PushSendStbyEntity();
         stby.setPushMsgSeq(dto.getMaster().getSeq());
-        stby.setTargetEmpid(dto.getTarget().getTargetEmpid());
+        stby.setTargetEmpid(dto.getTarget().getId().getTargetEmpid());
         stby.setPushSvrType(pushSvrType);
         stby.setPrcFlag("P");
         stby.setRegDtm(now);

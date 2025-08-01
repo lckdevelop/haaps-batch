@@ -1,11 +1,10 @@
 package com.hyundai.happsbtch.entity;
 
-import jakarta.persistence.*;
 import lombok.Data;
-import java.io.Serializable;
+import javax.persistence.*;
 
 @Entity
-@Table(name = "PUSH_SEND_STBY", schema = "SC_PT")
+@Table(name = "PUSH_SEND_STBY", schema = "SC_HAPP")
 @Data
 public class PushSendStbyEntity {
     @Id
