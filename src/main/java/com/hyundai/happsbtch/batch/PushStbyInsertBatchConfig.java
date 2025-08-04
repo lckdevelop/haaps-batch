@@ -7,35 +7,37 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.job.builder.JobBuilder;
-import org.springframework.batch.core.repository.JobRepository;
-import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.transaction.PlatformTransactionManager;
 
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
 public class PushStbyInsertBatchConfig {
 
-    private final JobRepository jobRepository;
-    private final PlatformTransactionManager transactionManager;
+    private final JobBuilderFactory jobBuilderFactory;
+    private final StepBuilderFactory stepBuilderFactory;
     private final PushStbyInsertReader pushStbyInsertReader;
     private final PushStbyInsertProcessor pushStbyInsertProcessor;
     private final PushStbyInsertWriter pushStbyInsertWriter;
+    
+    @Value("${batch.push.chunk-size:100}")
+    private int chunkSize;
 
     @Bean
     public Job pushStbyInsertJob() {
-        return new JobBuilder("pushStbyInsertJob", jobRepository)
+        return jobBuilderFactory.get("pushStbyInsertJob")
                 .start(pushStbyInsertStep())
                 .build();
     }
 
     @Bean
     public Step pushStbyInsertStep() {
-        return new StepBuilder("pushStbyInsertStep", jobRepository)
-                .<PushStbyInsertReader.PushStbyInsertDto, com.hyundai.happsbtch.entity.PushSendStbyEntity>chunk(100, transactionManager)
+        return stepBuilderFactory.get("pushStbyInsertStep")
+                .<PushStbyInsertReader.PushStbyInsertDto, com.hyundai.happsbtch.entity.PushSendStbyEntity>chunk(chunkSize)
                 .reader(pushStbyInsertReader)
                 .processor(pushStbyInsertProcessor)
                 .writer(pushStbyInsertWriter)

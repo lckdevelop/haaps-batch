@@ -7,35 +7,37 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.job.builder.JobBuilder;
-import org.springframework.batch.core.repository.JobRepository;
-import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.transaction.PlatformTransactionManager;
 
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
 public class PushSendBatchConfig {
 
-    private final JobRepository jobRepository;
-    private final PlatformTransactionManager transactionManager;
+    private final JobBuilderFactory jobBuilderFactory;
+    private final StepBuilderFactory stepBuilderFactory;
     private final PushSendStbyReader pushSendStbyReader;
     private final PushSendProcessor pushSendProcessor;
     private final PushSendResultWriter pushSendResultWriter;
+    
+    @Value("${batch.push.chunk-size:100}")
+    private int chunkSize;
 
     @Bean
     public Job pushSendJob() {
-        return new JobBuilder("pushSendJob", jobRepository)
+        return jobBuilderFactory.get("pushSendJob")
                 .start(pushSendStep())
                 .build();
     }
 
     @Bean
     public Step pushSendStep() {
-        return new StepBuilder("pushSendStep", jobRepository)
-                .<com.hyundai.happsbtch.entity.PushSendStbyEntity, com.hyundai.happsbtch.batch.processor.PushSendResult>chunk(100, transactionManager)
+        return stepBuilderFactory.get("pushSendStep")
+                .<com.hyundai.happsbtch.entity.PushSendStbyEntity, com.hyundai.happsbtch.batch.processor.PushSendResult>chunk(chunkSize)
                 .reader(pushSendStbyReader)
                 .processor(pushSendProcessor)
                 .writer(pushSendResultWriter)
