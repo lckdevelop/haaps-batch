@@ -92,21 +92,62 @@ docker exec -it oracle sqlplus SC_PT/1234@//localhost:1521/XE
 
 ## 🚀 실행 방법
 
-### 1. 환경 설정
-```bash
-# Oracle DB 실행 확인
-docker ps | grep oracle
+### 1. 환경별 설정
 
-# 애플리케이션 빌드
-./gradlew build
+#### 로컬 환경 (개발자 PC)
+```bash
+# 로컬 환경 실행
+chmod +x run-local.sh
+./run-local.sh
 ```
 
-### 2. 애플리케이션 실행
+#### 개발환경 (DEV 서버)
 ```bash
-./gradlew bootRun
+# 개발환경 실행
+chmod +x run-dev.sh
+./run-dev.sh
 ```
 
-### 3. 배치 수동 실행 (선택사항)
+#### 운영환경 (PROD 서버)
+```bash
+# 운영환경 빌드
+chmod +x build-prod.sh
+./build-prod.sh
+
+# 운영환경 실행
+java -jar -Dspring.profiles.active=prod build/libs/hdds-ch-happs-btch-0.0.1-SNAPSHOT.jar
+```
+
+### 2. 프로파일 설정
+
+각 환경별로 다른 설정 파일이 자동으로 로드됩니다:
+
+- **로컬**: `application-local.properties`
+- **개발**: `application-dev.properties` (기본값)
+- **운영**: `application-prod.properties`
+
+### 3. 환경별 설정 파일
+
+#### 로컬 환경 (`application-local.properties`)
+- Oracle DB: `localhost:1521/XEPDB1`
+- Redis: `localhost:6379`
+- 로깅: DEBUG 레벨
+- Batch Chunk Size: 50
+
+#### 개발환경 (`application-dev.properties`)
+- Oracle DB: `10.100.166.55:1523/HDLP1`
+- Redis: `10.100.166.55:6379`
+- 로깅: DEBUG 레벨
+- Batch Chunk Size: 100
+
+#### 운영환경 (`application-prod.properties`)
+- Oracle DB: `prod-oracle-server:1521/PRODDB`
+- Redis: `prod-redis-server:6379`
+- 로깅: INFO 레벨
+- Batch Chunk Size: 200
+- 환경변수 사용: `DB_PASSWORD`, `APNS_CERT_PASSWORD`
+
+### 4. 배치 수동 실행 (선택사항)
 ```bash
 # 데이터 적재 배치
 curl -X POST http://localhost:8080/api/batch/push-stby-insert
