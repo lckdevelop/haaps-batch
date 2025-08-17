@@ -22,7 +22,7 @@ public class PushSendBatchScheduler {
     
     private static final String SCHEDULER_NAME = "push-send-batch";
 
-    @Scheduled(fixedDelay = 10000)
+    @Scheduled(fixedDelay = 5000)
     public void runPushSendJob() {
         // 스케줄러 락 획득 시도
         if (!schedulerLockService.acquireLock(SCHEDULER_NAME)) {
@@ -32,9 +32,13 @@ public class PushSendBatchScheduler {
         
         try {
             log.info("[배치] 푸시 발송 및 결과 적재 배치 시작: {}", LocalDateTime.now());
+            
+            // executionTime을 포함하여 매번 다른 파라미터로 실행 - 5초마다 실행되면서도 중복 방지
             JobParameters params = new JobParametersBuilder()
-                    .addLong("time", System.currentTimeMillis())
+                    .addString("jobName", "pushSendJob")
+                    .addLong("executionTime", System.currentTimeMillis())
                     .toJobParameters();
+                    
             jobLauncher.run(pushSendJob, params);
             log.info("[배치] 푸시 발송 및 결과 적재 배치 완료: {}", LocalDateTime.now());
         } catch (Exception e) {

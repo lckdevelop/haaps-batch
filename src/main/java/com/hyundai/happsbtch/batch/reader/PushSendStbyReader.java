@@ -19,14 +19,24 @@ public class PushSendStbyReader implements ItemReader<PushSendStbyEntity> {
 
     @Override
     public PushSendStbyEntity read() {
-        if (iterator == null) {
-            List<PushSendStbyEntity> stbyList = pushSendStbyRepository.findByPrcFlag("P");
-            iterator = stbyList.iterator();
-            log.info("발송대기(P) 데이터 {}건 로드", stbyList.size());
+        // iterator가 비어있거나 null이면 새로운 데이터 조회 (실시간 데이터 감지)
+        if (iterator == null || !iterator.hasNext()) {
+            // 매번 데이터베이스에서 최신 상태 조회
+            List<PushSendStbyEntity> result = pushSendStbyRepository.findByPrcFlagAndToday("P");
+            
+            if (result.isEmpty()) {
+                return null;
+            }
+            
+            iterator = result.iterator();
         }
-        if (iterator != null && iterator.hasNext()) {
+        
+        // iterator에서 다음 항목 반환
+        if (iterator.hasNext()) {
             return iterator.next();
         }
+        
+        // iterator가 비어있으면 null 반환 (배치 작업 종료)
         return null;
     }
 } 

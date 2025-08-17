@@ -1,4 +1,4 @@
-package com.hyundai.happsbtch.batch;
+package com.hyundai.happsbtch.batch.job;
 
 import com.hyundai.happsbtch.batch.processor.PushStbyInsertProcessor;
 import com.hyundai.happsbtch.batch.reader.PushStbyInsertReader;
@@ -43,4 +43,4 @@ public class PushStbyInsertBatchConfig {
                 .writer(pushStbyInsertWriter)
                 .build();
     }
-} 
+}

@@ -14,6 +14,11 @@ if (project.hasProperty('prod')) {
 group = 'happs-btch'
 version = '0.0.1-SNAPSHOT'
 
+// 메인 클래스 지정
+springBoot {
+	mainClass = 'com.hyundai.happsbtch.HddsChHappsBtchApplication'
+}
+
 java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(8)
@@ -123,12 +128,7 @@ sourceSets {
 	}
 }
 
-// 운영환경 빌드 시 프로파일 설정
+// 프로파일별 리소스 처리
 processResources {
-	from("src/main/resources") {
-		include "application-${profile}.properties"
-		rename { String fileName ->
-			fileName.replace("application-${profile}.properties", "application.properties")
-		}
-	}
+	duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }

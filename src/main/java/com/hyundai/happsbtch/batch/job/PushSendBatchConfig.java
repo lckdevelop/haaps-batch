@@ -1,4 +1,4 @@
-package com.hyundai.happsbtch.batch;
+package com.hyundai.happsbtch.batch.job;
 
 import com.hyundai.happsbtch.batch.processor.PushSendProcessor;
 import com.hyundai.happsbtch.batch.reader.PushSendStbyReader;

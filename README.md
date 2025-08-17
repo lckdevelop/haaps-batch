@@ -133,12 +133,14 @@ java -jar -Dspring.profiles.active=prod build/libs/hdds-ch-happs-btch-0.0.1-SNAP
 - Redis: `localhost:6379`
 - 로깅: DEBUG 레벨
 - Batch Chunk Size: 50
+- **타임아웃**: Connection 5초, Read 5초
 
 #### 개발환경 (`application-dev.properties`)
 - Oracle DB: `10.100.166.55:1523/HDLP1`
 - Redis: `10.100.166.55:6379`
 - 로깅: DEBUG 레벨
 - Batch Chunk Size: 100
+- **타임아웃**: Connection 5초, Read 5초
 
 #### 운영환경 (`application-prod.properties`)
 - Oracle DB: `prod-oracle-server:1521/PRODDB`
@@ -146,8 +148,18 @@ java -jar -Dspring.profiles.active=prod build/libs/hdds-ch-happs-btch-0.0.1-SNAP
 - 로깅: INFO 레벨
 - Batch Chunk Size: 200
 - 환경변수 사용: `DB_PASSWORD`, `APNS_CERT_PASSWORD`
+- **타임아웃**: Connection 5초, Read 5초
 
-### 4. 배치 수동 실행 (선택사항)
+### 4. 타임아웃 설정
+
+모든 외부 통신에 5초 타임아웃이 적용됩니다:
+
+- **FCM (Firebase)**: Connection 5초, Read 5초
+- **APNS (Apple)**: Connection 5초, Read 5초  
+- **Redis**: 5초
+- **Oracle DB**: Connection 5초
+
+### 5. 배치 수동 실행 (선택사항)
 ```bash
 # 데이터 적재 배치
 curl -X POST http://localhost:8080/api/batch/push-stby-insert

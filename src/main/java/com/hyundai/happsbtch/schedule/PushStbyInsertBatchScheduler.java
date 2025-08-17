@@ -22,7 +22,7 @@ public class PushStbyInsertBatchScheduler {
     
     private static final String SCHEDULER_NAME = "push-stby-insert-batch";
 
-    @Scheduled(fixedDelay = 10000)
+    @Scheduled(fixedDelay = 5000)
     public void runPushStbyInsertJob() {
         // 스케줄러 락 획득 시도
         if (!schedulerLockService.acquireLock(SCHEDULER_NAME)) {
@@ -32,9 +32,12 @@ public class PushStbyInsertBatchScheduler {
         
         try {
             log.info("[배치] 발송대기 적재 배치 시작: {}", LocalDateTime.now());
+            
             JobParameters params = new JobParametersBuilder()
-                    .addLong("time", System.currentTimeMillis())
+                    .addString("jobName", "pushStbyInsertJob")
+                    .addLong("executionTime", System.currentTimeMillis())
                     .toJobParameters();
+                    
             jobLauncher.run(pushStbyInsertJob, params);
             log.info("[배치] 발송대기 적재 배치 완료: {}", LocalDateTime.now());
         } catch (Exception e) {

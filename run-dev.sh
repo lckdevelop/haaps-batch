@@ -7,6 +7,6 @@
 echo "🚀 개발환경에서 애플리케이션을 시작합니다..."
 
 # 프로파일을 dev로 설정하여 실행
-./gradlew bootRun --args='--spring.profiles.active=dev'
+./gradlew bootRun -Dspring.profiles.active=dev
 
 echo "✅ 개발환경 애플리케이션이 종료되었습니다." 

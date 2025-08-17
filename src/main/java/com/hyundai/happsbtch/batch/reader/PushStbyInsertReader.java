@@ -23,22 +23,46 @@ public class PushStbyInsertReader implements ItemReader<PushStbyInsertReader.Pus
 
     @Override
     public PushStbyInsertDto read() {
-        if (iterator == null) {
-            List<PushStbyInsertDto> result = new ArrayList<>();
-            List<PushMsgMasterEntity> masters = masterRepository.findByPrcFlagAndRsvYn("P", "N");
-            for (PushMsgMasterEntity master : masters) {
-                List<PushSendTargetInfoEntity> targets = targetRepository.findByIdPushMsgSeq(master.getSeq());
-                for (PushSendTargetInfoEntity target : targets) {
-                    result.add(new PushStbyInsertDto(master, target));
-                }
+        // iterator가 비어있거나 null이면 새로운 데이터 조회 (실시간 데이터 감지)
+        if (iterator == null || !iterator.hasNext()) {
+            List<PushStbyInsertDto> result = loadData();
+            if (result.isEmpty()) {
+                return null;
             }
             iterator = result.iterator();
-            log.info("대기 적재 대상 {}건 로드", result.size());
         }
-        if (iterator != null && iterator.hasNext()) {
+        
+        // iterator에서 다음 항목 반환
+        if (iterator.hasNext()) {
             return iterator.next();
         }
+        
+        // iterator가 비어있으면 null 반환 (배치 작업 종료)
         return null;
+    }
+    
+    private List<PushStbyInsertDto> loadData() {
+        List<PushStbyInsertDto> result = new ArrayList<>();
+        
+        // Native Query를 사용하여 Hibernate 캐시 우회하고 최신 데이터 조회
+        List<PushMsgMasterEntity> masters = masterRepository.findByPrcFlagAndRsvYnAndToday("P", "N");
+        log.info("[대기적재] PUSH_MSG_MASTER 조회 결과: {}건", masters.size());
+        
+        for (PushMsgMasterEntity master : masters) {
+            log.info("[대기적재] PUSH_MSG_MASTER 처리 중 - SEQ: {}", master.getSeq());
+            
+            // Native Query를 사용하여 Hibernate 캐시 우회
+            List<PushSendTargetInfoEntity> targets = targetRepository.findByIdPushMsgSeqNative(master.getSeq());
+            log.info("[대기적재] PUSH_SEND_TARGET_INFO 조회 결과: {}건 (PUSH_MSG_SEQ: {})", targets.size(), master.getSeq());
+            
+            for (PushSendTargetInfoEntity target : targets) {
+                result.add(new PushStbyInsertDto(master, target));
+                log.info("[대기적재] DTO 생성 - PUSH_MSG_SEQ: {}, EMP_ID: {}", master.getSeq(), target.getId().getTargetEmpid());
+            }
+        }
+        
+        log.info("[대기적재] 최종 DTO 생성 결과: {}건", result.size());
+        return result;
     }
 
     public static class PushStbyInsertDto {
