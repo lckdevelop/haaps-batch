@@ -17,21 +17,24 @@ public class PushSendResult {
     private boolean success;
     private String failCode;
     private String failMsg;
+    private String appId; // PUSH_MSG_MASTER의 APP_ID 전달용
 
-    public static PushSendResult success(PushSendStbyEntity stby, UserDeviceInfo device) {
+    public static PushSendResult success(PushSendStbyEntity stby, UserDeviceInfo device, String appId) {
         return PushSendResult.builder()
                 .stby(stby)
                 .device(device)
                 .success(true)
+                .appId(appId)
                 .build();
     }
-    public static PushSendResult fail(PushSendStbyEntity stby, UserDeviceInfo device, String failCode, String failMsg) {
+    public static PushSendResult fail(PushSendStbyEntity stby, UserDeviceInfo device, String failCode, String failMsg, String appId) {
         return PushSendResult.builder()
                 .stby(stby)
                 .device(device)
                 .success(false)
                 .failCode(failCode)
                 .failMsg(failMsg)
+                .appId(appId)
                 .build();
     }
 } 

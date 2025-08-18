@@ -22,7 +22,7 @@ public class PushSendBatchScheduler {
     
     private static final String SCHEDULER_NAME = "push-send-batch";
 
-    @Scheduled(fixedDelay = 5000)
+    @Scheduled(fixedRate = 5000)
     public void runPushSendJob() {
         // 스케줄러 락 획득 시도
         if (!schedulerLockService.acquireLock(SCHEDULER_NAME)) {

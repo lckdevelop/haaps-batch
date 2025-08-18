@@ -27,12 +27,15 @@ public class PushStbyInsertProcessor implements ItemProcessor<PushStbyInsertDto,
     public PushSendStbyEntity process(PushStbyInsertDto dto) {
         // 중복 체크: 이미 push_send_stby에 존재하는지 확인
         if (isDuplicateStby(dto.getMaster().getSeq(), dto.getTarget().getId().getTargetEmpid())) {
+            log.info("[대기적재] 중복 데이터 스킵 - PUSH_MSG_SEQ: {}, EMP_ID: {}", 
+                    dto.getMaster().getSeq(), dto.getTarget().getId().getTargetEmpid());
             return null;
         }
         
         // Native Query를 사용하여 Hibernate 캐시 우회
         List<UserDeviceInfo> deviceList = userDeviceInfoRepository.findByEmpIdAndPushAgrYnNative(dto.getTarget().getId().getTargetEmpid(), "Y");
         if (deviceList.isEmpty()) {
+            log.warn("[대기적재] 디바이스 정보 없음 OR 푸시 알림 미동의: {}", dto.getTarget().getId().getTargetEmpid());
             return null;
         }
         
@@ -55,6 +58,10 @@ public class PushStbyInsertProcessor implements ItemProcessor<PushStbyInsertDto,
         stby.setPrcFlag("P");
         stby.setRegDtm(now);
         stby.setRgstId("batch");
+        stby.setRegPrgId("batch");
+        stby.setChgDtm(now);
+        stby.setChgId("batch");
+        stby.setChgPrgId("batch");
         
         return stby;
     }

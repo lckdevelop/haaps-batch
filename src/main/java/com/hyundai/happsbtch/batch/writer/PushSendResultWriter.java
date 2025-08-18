@@ -31,36 +31,44 @@ public class PushSendResultWriter implements ItemWriter<PushSendResult> {
             PushSendStbyEntity stby = result.getStby();
             UserDeviceInfo device = result.getDevice();
             String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+            String appId = result.getAppId();
+            
             if (result.isSuccess()) {
                 PushSuccessResultEntity success = new PushSuccessResultEntity();
                 success.setPushSendStbySeq(stby.getSeq());
                 success.setPushMsgSeq(stby.getPushMsgSeq());
                 success.setDeviceToken(device != null ? device.getDeviceToken() : null);
                 success.setEmpId(stby.getTargetEmpid());
-                success.setAppId(null); // (푸시발송대기 테이블에 있으면 좋음)
+                success.setAppId(appId);
                 success.setPushSvrType(stby.getPushSvrType());
                 success.setSendStatusCode("S");
                 success.setSentDtm(now);
                 success.setRegDtm(now);
                 success.setRgstId("batch");
+                success.setRegPrgId("batch");
+                success.setChgDtm(now);
+                success.setChgId("batch");
+                success.setChgPrgId("batch");
                 successResultRepository.save(success);
-                log.info("성공 결과 저장: {}", success);
             } else {
                 PushFailResultEntity fail = new PushFailResultEntity();
                 fail.setPushSendStbySeq(stby.getSeq());
                 fail.setPushMsgSeq(stby.getPushMsgSeq());
                 fail.setDeviceToken(device != null ? device.getDeviceToken() : null);
                 fail.setEmpId(stby.getTargetEmpid());
-                fail.setAppId(null); // (푸시발송대기 테이블에 있으면 좋음)
+                fail.setAppId(appId);
                 fail.setPushSvrType(stby.getPushSvrType());
                 fail.setPushSvrRstCode(result.getFailCode());
                 fail.setPushSvrRstMsg(result.getFailMsg());
                 fail.setRegDtm(now);
                 fail.setRgstId("batch");
+                fail.setRegPrgId("batch");
+                fail.setChgDtm(now);
+                fail.setChgId("batch");
+                fail.setChgPrgId("batch");
                 failResultRepository.save(fail);
-                log.info("실패 결과 저장: {}", fail);
             }
-            // 대기 테이블 상태값 변경
+            
             stby.setPrcFlag("C");
             stbyRepository.save(stby);
         }

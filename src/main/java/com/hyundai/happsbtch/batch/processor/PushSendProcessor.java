@@ -31,14 +31,14 @@ public class PushSendProcessor implements ItemProcessor<PushSendStbyEntity, Push
         
         if (messageMaster == null) {
             log.error("푸시 메시지 마스터 정보를 찾을 수 없습니다: {}", stby.getPushMsgSeq());
-            return PushSendResult.fail(stby, null, "NO_MESSAGE_MASTER", "Message master not found");
+            return PushSendResult.fail(stby, null, "NO_MESSAGE_MASTER", "Message master not found", null);
         }
         
         // Native Query를 사용하여 Hibernate 캐시 우회
         List<UserDeviceInfo> deviceList = userDeviceInfoRepository.findByEmpIdAndPushAgrYnNative(stby.getTargetEmpid(), "Y");
         if (deviceList.isEmpty()) {
             log.warn("사용자 디바이스 정보 없음 OR 푸시 알림 미동의: {}", stby.getTargetEmpid());
-            return PushSendResult.fail(stby, null, "NO_DEVICE", "No device info");
+            return PushSendResult.fail(stby, null, "NO_DEVICE", "No device info", messageMaster.getAppId());
         }
         
         // 여러 디바이스가 있을 경우 모두 발송 (여기선 첫 번째만 예시)
@@ -55,13 +55,13 @@ public class PushSendProcessor implements ItemProcessor<PushSendStbyEntity, Push
             if (!success) failMsg = "APNS_FAIL";
         } else {
             log.warn("지원하지 않는 OS: {}", device.getTeOpsyGbcd());
-            return PushSendResult.fail(stby, device, "UNSUPPORTED_OS", "Not supported OS");
+            return PushSendResult.fail(stby, device, "UNSUPPORTED_OS", "Not supported OS", messageMaster.getAppId());
         }
 
         if (success) {
-            return PushSendResult.success(stby, device);
+            return PushSendResult.success(stby, device, messageMaster.getAppId());
         } else {
-            return PushSendResult.fail(stby, device, failCode, failMsg);
+            return PushSendResult.fail(stby, device, failCode, failMsg, messageMaster.getAppId());
         }
     }
 } 

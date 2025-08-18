@@ -44,4 +44,16 @@ public class PushFailResultEntity { // 푸시실패결과
 
     @Column(name = "RGST_ID", length = 50)
     private String rgstId;
+
+    @Column(name = "REG_PRG_ID", length = 100)
+    private String regPrgId;
+
+    @Column(name = "CHG_DTM", length = 14)
+    private String chgDtm;
+
+    @Column(name = "CHG_ID", length = 100)
+    private String chgId;
+
+    @Column(name = "CHG_PRG_ID", length = 100)
+    private String chgPrgId;
 }

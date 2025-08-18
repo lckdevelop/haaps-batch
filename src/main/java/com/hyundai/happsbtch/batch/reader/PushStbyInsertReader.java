@@ -1,44 +1,50 @@
 package com.hyundai.happsbtch.batch.reader;
 
+import com.hyundai.happsbtch.batch.reader.PushStbyInsertReader.PushStbyInsertDto;
 import com.hyundai.happsbtch.entity.PushMsgMasterEntity;
 import com.hyundai.happsbtch.entity.PushSendTargetInfoEntity;
 import com.hyundai.happsbtch.repository.PushMsgMasterRepository;
 import com.hyundai.happsbtch.repository.PushSendTargetInfoRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.core.annotation.BeforeStep;
 import org.springframework.batch.item.ItemReader;
+import org.springframework.batch.item.NonTransientResourceException;
+import org.springframework.batch.item.ParseException;
+import org.springframework.batch.item.UnexpectedInputException;
+import org.springframework.batch.item.support.ListItemReader;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class PushStbyInsertReader implements ItemReader<PushStbyInsertReader.PushStbyInsertDto> {
+public class PushStbyInsertReader implements ItemReader<PushStbyInsertDto> {
     private final PushMsgMasterRepository masterRepository;
     private final PushSendTargetInfoRepository targetRepository;
-    private Iterator<PushStbyInsertDto> iterator;
+    
+    private ListItemReader<PushStbyInsertDto> delegateReader;
+
+    @BeforeStep
+    public void beforeStep(StepExecution stepExecution) {
+        log.info("[대기적재] 새로운 배치 시작 - Step: {}", stepExecution.getStepName());
+        
+        // 매번 새로운 데이터 조회
+        List<PushStbyInsertDto> data = loadData();
+        delegateReader = new ListItemReader<>(data);
+        
+        log.info("[대기적재] 데이터 {}건 로드 완료", data.size());
+    }
 
     @Override
-    public PushStbyInsertDto read() {
-        // iterator가 비어있거나 null이면 새로운 데이터 조회 (실시간 데이터 감지)
-        if (iterator == null || !iterator.hasNext()) {
-            List<PushStbyInsertDto> result = loadData();
-            if (result.isEmpty()) {
-                return null;
-            }
-            iterator = result.iterator();
+    public PushStbyInsertDto read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
+        if (delegateReader == null) {
+            return null;
         }
-        
-        // iterator에서 다음 항목 반환
-        if (iterator.hasNext()) {
-            return iterator.next();
-        }
-        
-        // iterator가 비어있으면 null 반환 (배치 작업 종료)
-        return null;
+        return delegateReader.read();
     }
     
     private List<PushStbyInsertDto> loadData() {
@@ -68,10 +74,12 @@ public class PushStbyInsertReader implements ItemReader<PushStbyInsertReader.Pus
     public static class PushStbyInsertDto {
         private final PushMsgMasterEntity master;
         private final PushSendTargetInfoEntity target;
+        
         public PushStbyInsertDto(PushMsgMasterEntity master, PushSendTargetInfoEntity target) {
             this.master = master;
             this.target = target;
         }
+        
         public PushMsgMasterEntity getMaster() { return master; }
         public PushSendTargetInfoEntity getTarget() { return target; }
     }
