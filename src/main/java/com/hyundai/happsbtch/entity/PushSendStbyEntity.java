@@ -10,9 +10,9 @@ public class PushSendStbyEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "push_send_stby_seq_gen")
     @SequenceGenerator(
-            name = "push_send_stby_seq_gen",          // JPA에서 사용하는 논리적 이름
-            sequenceName = "PUSH_SEND_STBY_SEQ",      // 실제 Oracle 시퀀스 이름
-            allocationSize = 1                        // 시퀀스 증가 단위 (항상 1로 설정)
+            name = "push_send_stby_seq_gen",
+            sequenceName = "PUSH_SEND_STBY_SEQ",
+            allocationSize = 1
     )
     @Column(name = "SEQ")
     private Long seq;
@@ -38,15 +38,15 @@ public class PushSendStbyEntity {
     @Column(name = "RGST_ID", length = 50)
     private String rgstId;
 
-//    @Column(name = "REG_PRG_ID", length = 100)
-//    private String regPrgId;
-//
-//    @Column(name = "CHG_DTM", length = 14)
-//    private String chgDtm;
-//
-//    @Column(name = "CHG_ID", length = 100)
-//    private String chgId;
-//
-//    @Column(name = "CHG_PRG_ID", length = 100)
-//    private String chgPrgId;
+    @Column(name = "REG_PRG_ID", length = 100)
+    private String regPrgId;
+
+    @Column(name = "CHG_DTM", length = 14)
+    private String chgDtm;
+
+    @Column(name = "CHG_ID", length = 100)
+    private String chgId;
+
+    @Column(name = "CHG_PRG_ID", length = 100)
+    private String chgPrgId;
 }

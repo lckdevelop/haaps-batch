@@ -4,8 +4,20 @@ plugins {
 	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
 }
 
+// 운영환경 프로파일 설정
+if (project.hasProperty('prod')) {
+	ext.profile = 'prod'
+} else {
+	ext.profile = 'dev'
+}
+
 group = 'happs-btch'
 version = '0.0.1-SNAPSHOT'
+
+// 메인 클래스 지정
+springBoot {
+	mainClass = 'com.hyundai.happsbtch.HddsChHappsBtchApplication'
+}
 
 java {
 	toolchain {
@@ -41,39 +53,39 @@ configurations {
 
 repositories {
 	// 그룹 저장소: Maven Central 대체 (mirrorOf = *)
-	maven {
-		allowInsecureProtocol = true
-		name = "nexus-hdlp-groups"
-		url = uri("http://nexus.ehyundai.com/repository/hdlp-groups/")
-		credentials {
-			username = findProperty("nexusUsername") ?: System.getenv("NEXUS_USERNAME")
-			password = findProperty("nexusPassword") ?: System.getenv("NEXUS_PASSWORD")
-		}
-	}
-
-	// Maven Central mirror 역할
-	maven {
-		allowInsecureProtocol = true
-		name = "nexus-maven-public"
-		url = uri("http://nexus.ehyundai.com/repository/maven-public/")
-		credentials {
-			username = findProperty("nexusUsername") ?: System.getenv("NEXUS_USERNAME")
-			password = findProperty("nexusPassword") ?: System.getenv("NEXUS_PASSWORD")
-		}
-	}
-
-	maven {
-		allowInsecureProtocol = true
-		name = "nexus-3rd-party"
-		url = uri("http://nexus.ehyundai.com/repository/3rd-party/")
-		credentials {
-			username = findProperty("nexusUsername") ?: System.getenv("NEXUS_USERNAME")
-			password = findProperty("nexusPassword") ?: System.getenv("NEXUS_PASSWORD")
-		}
-	}
+//	maven {
+//		allowInsecureProtocol = true
+//		name = "nexus-hdlp-groups"
+//		url = uri("http://nexus.ehyundai.com/repository/hdlp-groups/")
+//		credentials {
+//			username = findProperty("nexusUsername") ?: System.getenv("NEXUS_USERNAME")
+//			password = findProperty("nexusPassword") ?: System.getenv("NEXUS_PASSWORD")
+//		}
+//	}
+//
+//	// Maven Central mirror 역할
+//	maven {
+//		allowInsecureProtocol = true
+//		name = "nexus-maven-public"
+//		url = uri("http://nexus.ehyundai.com/repository/maven-public/")
+//		credentials {
+//			username = findProperty("nexusUsername") ?: System.getenv("NEXUS_USERNAME")
+//			password = findProperty("nexusPassword") ?: System.getenv("NEXUS_PASSWORD")
+//		}
+//	}
+//
+//	maven {
+//		allowInsecureProtocol = true
+//		name = "nexus-3rd-party"
+//		url = uri("http://nexus.ehyundai.com/repository/3rd-party/")
+//		credentials {
+//			username = findProperty("nexusUsername") ?: System.getenv("NEXUS_USERNAME")
+//			password = findProperty("nexusPassword") ?: System.getenv("NEXUS_PASSWORD")
+//		}
+//	}
 
 	// Fallback
-	//mavenCentral()
+	mavenCentral()
 }
 //dependencies {
 //	implementation 'com.oracle.database.jdbc:orai18n:19.3.0.0'
@@ -105,3 +117,18 @@ dependencies {
 //tasks.named('test') {
 //	useJUnitPlatform()
 //}
+
+// 프로파일별 리소스 설정
+sourceSets {
+	main {
+		resources {
+			srcDirs = ["src/main/resources"]
+			includes = ["**/*"]
+		}
+	}
+}
+
+// 프로파일별 리소스 처리
+processResources {
+	duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}

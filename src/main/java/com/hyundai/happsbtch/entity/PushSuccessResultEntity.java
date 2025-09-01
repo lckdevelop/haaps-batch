@@ -13,13 +13,13 @@ public class PushSuccessResultEntity { // 푸시성공결과
     @SequenceGenerator(
             name = "push_success_result_seq_gen",
             sequenceName = "PUSH_SUCCESS_RESULT_SEQ",
-            allocationSize = 1 // 100으로 변경하는걸로 고려
+            allocationSize = 1
     )
-    @Column(name = "PUSH_MSG_SEQ")
-    private Long pushMsgSeq;
-
     @Column(name = "PUSH_SEND_STBY_SEQ")
     private Long pushSendStbySeq;
+
+    @Column(name = "PUSH_MSG_SEQ")
+    private Long pushMsgSeq;
 
     @Column(name = "DEVI_TOKN", length = 1000)
     private String deviceToken;
@@ -50,4 +50,16 @@ public class PushSuccessResultEntity { // 푸시성공결과
 
     @Column(name = "RGST_ID", length = 50)
     private String rgstId;
+
+    @Column(name = "REG_PRG_ID", length = 100)
+    private String regPrgId;
+
+    @Column(name = "CHG_DTM", length = 14)
+    private String chgDtm;
+
+    @Column(name = "CHG_ID", length = 100)
+    private String chgId;
+
+    @Column(name = "CHG_PRG_ID", length = 100)
+    private String chgPrgId;
 }

@@ -13,7 +13,7 @@ public class PushFailResultEntity { // 푸시실패결과
     @SequenceGenerator(
             name = "push_fail_result_seq_gen",
             sequenceName = "PUSH_FAIL_RESULT_SEQ",
-            allocationSize = 1 // 100으로 변경하는걸로 고려
+            allocationSize = 1
     )
     @Column(name = "PUSH_MSG_SEQ")
     private Long pushMsgSeq;
@@ -44,4 +44,16 @@ public class PushFailResultEntity { // 푸시실패결과
 
     @Column(name = "RGST_ID", length = 50)
     private String rgstId;
+
+    @Column(name = "REG_PRG_ID", length = 100)
+    private String regPrgId;
+
+    @Column(name = "CHG_DTM", length = 14)
+    private String chgDtm;
+
+    @Column(name = "CHG_ID", length = 100)
+    private String chgId;
+
+    @Column(name = "CHG_PRG_ID", length = 100)
+    private String chgPrgId;
 }

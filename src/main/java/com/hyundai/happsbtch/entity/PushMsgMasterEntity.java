@@ -38,7 +38,7 @@ public class PushMsgMasterEntity { // 푸시메시지마스터
     @Column(name = "PUSH_PRTY_VAL")
     private Integer pushPrtyVal;
 
-    @Column(name = "PRC_FLAG", columnDefinition = "CHAR(1)")
+    @Column(name = "PRC_FLAG", length = 1)
     private String prcFlag; // 처리상태: 'P'(대기), 'C'(완료)
 
     @Column(name = "REG_DTM", length = 14)
